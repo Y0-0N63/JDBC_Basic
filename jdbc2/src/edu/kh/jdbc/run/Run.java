@@ -6,5 +6,7 @@ public class Run {
 
 	public static void main(String[] args) {
 		UserView view = new UserView();
+		view.mainMenu();
 	}
+	
 }

@@ -38,8 +38,8 @@ public class JDBCExample6 {
 			
 			String sql = """
 					UPDATE TB_USER
-					SET USER_NAME = '?'
-					WHERE USER_ID = '?' AND USER_PW = '?'
+					SET USER_NAME = ?
+					WHERE USER_ID = ? AND USER_PW = ?
 					""";
 			
 			// 4. PreparedStatement 객체 생성
@@ -55,11 +55,11 @@ public class JDBCExample6 {
 			int result = pstmt.executeUpdate();
 			
 			if(result > 0) {
-				conn.commit();
 				System.out.println("수정 성공!");
+				conn.commit();
 			} else {
-				conn.rollback();
 				System.out.println("아이디 또는 비밀번호 불일치");
+				conn.rollback();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

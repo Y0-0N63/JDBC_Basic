@@ -1,8 +1,10 @@
 package edu.kh.jdbc.view;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import edu.kh.jdbc.model.dto.User;
 import edu.kh.jdbc.model.service.UserService;
 
 // View : 사용자와 직접 상호작용하는 화면(UI) 담당 > 사용자에게 입력을 받고 결과를 출력
@@ -61,8 +63,65 @@ public class UserView {
 		} while (input != 0);
 	}
 
+	/**
+	 * 1. User 등록과 관련된 View
+	 * @throws Exception 
+	 */
+	private void insertUser() throws Exception {
+		System.out.println("\n====1. User 등록====\n");
+		
+		System.out.print("ID : ");
+		String userId = sc.next();
+		
+		System.out.print("PW : ");
+		String userPw = sc.next();
+		
+		System.out.print("Name : ");
+		String userName = sc.next();
+		
+		// 입력받은 세 개의 값을 한 번에 묶어 전달할 수 있도록 > User라는 이름의 DTO 생성 > 필드에 값 세팅
+		User user = new User(); // 기본 생성자 > 내부 필드값 : JVM이 기본값으로 설정한 상태 (Heap 메모리)
+
+		// setter를 이용해 값 넣어주기
+		user.setUserId(userId); // 기본값으로 세팅된 상태
+		user.setUserPw(userPw);
+		user.setUserName(userName);
+		
+		// 서비스 호출(INSERT) > 결과 반환 받기(int, 결과 행의 개수)
+		// service 객체(UserService)에 있는 insertUser()라는 이름의 메서드 호출하기
+		int result = service.insertUser(user);
+		
+		// 반환된 결과에 따라 출력할 내용 선택
+		if (result > 0) {
+			System.out.println("\n" + userId + " 사용자가 등록되었습니다.\n");
+		} else {
+			System.out.println("\n***등록 실패***\n");
+		}
+	}
+	
+	/**
+	 * 2. User 전체 조회 관련 View (Select)
+	 */
+	private void selectAll() throws Exception {
+		System.out.println("\n====2. User 전체 조회====\n");
+		
+		// 서비스(SELECT) 호출 후 결과(List<User>) 반환받기
+		// ResultSet에서 한 행씩 추출 > 'User' 객체(DTO)에 저장 > List(Collection) > List<User>
+		List<User> userList = service.selectAll();
+
+		// 조회 결과가 없는 경우
+		if(userList.isEmpty()) {
+			System.out.println("\n***조회 결과가 없습니다***\n");
+			return;
+		} else {
+			// 조회 결과가 있을 경우 > uesrList에 있는 모든 User 객체 출력
+			for(User user : userList){
+				System.out.println(user);
+			}
+		}
+	}
+
 	private void multiInsertUser() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -91,13 +150,4 @@ public class UserView {
 		
 	}
 
-	private void selectAll() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void insertUser() {
-		// TODO Auto-generated method stub
-		
-	}
 }
