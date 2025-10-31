@@ -9,6 +9,9 @@ import edu.kh.jdbc.model.dao.UserDAO;
 import edu.kh.jdbc.model.dto.User;
 
 // Service : Model 중 하나로, 비즈니스 로직을 처리하는 계층 > 데이터를 가공하고 트랜잭션(commit, rollback)을 관리
+/**
+ * 
+ */
 public class UserService {
 	// 필드
 	private UserDAO dao = new UserDAO();
@@ -22,7 +25,7 @@ public class UserService {
 		// 1. JDBCTemplate의 getConnection() 사용하여 커넥션 생성 > DAO에게 전달
 		Connection conn = JDBCTemplate.getConnection();
 		
-		// 2. 데이터 가공 > 할 필요가 없는 경우 > 생략
+		// 2. 데이터 가공(USER 객체를 생성해 객체 내 담아주기 등...) > 할 필요가 없는 경우 > 생략
 		
 		// 3. DAO 메서드 호출 후 결과 반환받기
 		int result = dao.insertUser(conn, user);
@@ -99,7 +102,7 @@ public class UserService {
 		Connection conn = JDBCTemplate.getConnection();
 		
 		// 2. 데이터 가공 > 할 필요 없는 경우 > 생략
-		
+			
 		// 3. DAO 메서드 호출(SELECT) 후 결과(result) 반환받기
 		User result = dao.searchUserNo(conn, userNum);
 		
@@ -142,27 +145,49 @@ public class UserService {
 	}
 
 	/**
-	 * 6. ID, PW가 일치하는 회원이 있을 경우 이름 수정(UPDATE)
+	 * 6-1. ID, PW가 일치하는 회원이 있는지 조회 (SELECT)
 	 * @param inputId
 	 * @param inputPw
-	 * @return int result
+	 * @return
 	 * @throws Exception 
 	 */
-	public int updateUser(String inputId, String inputPw, String inputName) throws Exception {
+	public int selectUserNo(String inputId, String inputPw) throws Exception {
 		// 1. 커넥션 생성
 		Connection conn = JDBCTemplate.getConnection();
 		
 		// 2. 데이터 가공 > 할 필요 없는 경우 > 생략
 		
 		// 3. DAO 메서드 호출(SELECT) 후 결과(result) 반환받기
-		int result = dao.updateUser(conn, inputId, inputPw, inputName);
+		int userNo = dao.selectUser(conn, inputId, inputPw);
+
+		// 4. 수행 결과에 따라 트랜잭션 제어 처리 > SELECT이므로 생략
+
+		// 5. Connection 반환
+		JDBCTemplate.close(conn);
 		
-		// 4. DML(UPDATE) 수행 결과에 따라 트랜잭션 처리
-		if (result > 0) {
-			JDBCTemplate.commit(conn);
-		} else {
-			JDBCTemplate.rollback(conn);
-		}
+		// 6. 결과 반환
+		return userNo;
+	}
+
+	/**
+	 * 6-2. USER_NO가 일치하는 회원의 이름 수정 서비스(UPDATE)
+	 * @param userNo
+	 * @param inputName
+	 * @return result
+	 * @throws Exception 
+	 */
+	public int updateUserName(int userNo, String inputName) throws Exception {
+		// 1. 커넥션 생성
+		Connection conn = JDBCTemplate.getConnection();
+		
+		// 2. 데이터 가공 > 할 필요 없는 경우 > 생략
+		
+		// 3. DAO 메서드 호출(SELECT) 후 결과(result) 반환받기
+		int result = dao.updateUserName(conn, userNo, inputName);
+
+		// 4. 수행 결과에 따라 트랜잭션 제어 처리
+		if(result > 0) JDBCTemplate.commit(conn);
+		else JDBCTemplate.rollback(conn);
 		
 		// 5. Connection 반환
 		JDBCTemplate.close(conn);
@@ -172,20 +197,46 @@ public class UserService {
 	}
 
 	/**
-	 * 입력한 아이디가 존재한다면 > true 반환
+	 * 7. 아이디 중복 확인 서비스
 	 * @param inputId
 	 * @return
-	 * @throws Exception 
 	 */
-	public boolean existUserId(String inputId) throws Exception {
-		// 1. 커넥션 생성
+	public int idCheck(String inputId) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		int count = dao.idCheck(conn, inputId);
+		JDBCTemplate.close(conn);
+		
+		return count;
+	}
+
+	/**
+	 * 8. userList에 있는 모든 객체를 INSERT하는 서비스
+	 * @param userList
+	 * @return
+	 */
+	public int multiInsertUser(List<User> userList) throws Exception {
+		// 다중 INSERT 방법
+		// 1) SQL을 이용한 다중 INSERT
+		// 2) Java 반복문을 이용한 다중 INSERT
 		Connection conn = JDBCTemplate.getConnection();
 		
-		// 2. 데이터 가공 > 할 필요 없는 경우 > 생략
+		// 삽입 성공한 행의 개수를 세는 변수
+		int count = 0;
 		
-		// 3. DAO 메서드 호출(SELECT) 후 결과(result) 반환받기
-		boolean result = dao.existUserId(conn, inputId);
+		for(User user : userList) {
+			int result = dao.insertUser(conn, user);
+			count += result; // 삽입 성공한 행의 개수를 count에 누적시키기
+		}
 		
-		return result;
+		// 전체 삽입 성공 시 commit > 그렇지 않으면 rollback(일부 삽입, 전체 실패)
+		if(count == userList.size()) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		return count;
 	}
+
 }
