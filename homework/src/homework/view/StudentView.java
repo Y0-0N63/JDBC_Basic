@@ -25,6 +25,7 @@ public class StudentView {
 				System.out.println("0. 프로그램 종료");
 				System.out.print("메뉴 선택 : ");
 				menuNum = sc.nextInt();
+				sc.nextLine();
 
 				switch (menuNum) {
 				case 1:
@@ -37,7 +38,7 @@ public class StudentView {
 				case 4:
 					deleteStd(); break;
 				case 5:
-					/* searchByDept(); */ break;
+					searchByMajor(); break;
 				case 0:
 					System.out.println("\n프로그램을 종료합니다.\n");
 					break;
@@ -116,7 +117,7 @@ public class StudentView {
 			System.out.println("3-2. 학생 나이 수정");
 			System.out.println("3-3. 학생 전공 수정");
 			System.out.println("3-0. 수정 종료");
-			System.out.print("입력 : ");
+			System.out.print("메뉴 선택 : ");
 			inputNum = sc.nextInt();
 			sc.nextLine();
 			
@@ -185,6 +186,25 @@ public class StudentView {
 			System.out.println("\n학생 삭제에 성공했습니다.\n");
 		} else {
 			System.out.println("\n학생 삭제에 실패했습니다.\n");
+		}
+	}
+	
+	private void searchByMajor() throws Exception {
+		System.out.println("\n=== 5. 전공별 학생 조회 ===\n");
+		
+		System.out.print("검색할 전공 : ");
+		String inputDept = sc.nextLine();
+		
+		List<Student> stdList = service.searchByMajor(inputDept);
+		
+		if (stdList.isEmpty()) {
+			System.out.println("\n조회된 학생이 없습니다.\n");
+			return;
+		}
+		
+		System.out.println("\n=== "+ inputDept + "의 학생 명단 ===\n");
+		for(Student std : stdList) {
+			System.out.println(std);
 		}
 	}
 }

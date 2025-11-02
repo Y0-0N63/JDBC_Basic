@@ -71,7 +71,6 @@ public class StudentDAO {
 		} finally {
 			JDBCTemplate.close(rs);
 			JDBCTemplate.close(pstmt);
-			JDBCTemplate.close(conn);
 		}
 		return stdList;
 	}
@@ -174,5 +173,38 @@ public class StudentDAO {
 		}
 		
 		return result;
+	}
+
+	public List<Student> searchByMajor(Connection conn, String inputDept) throws Exception {
+		List<Student> stdList = new ArrayList<>();
+		
+		try {
+			String sql = """
+					SELECT STD_NO 학번, STD_NAME 이름, STD_AGE 나이, MAJOR 전공,
+					TO_CHAR(ENT_DATE, 'YYYY"년" MM"월" DD"일"') 입학일
+					FROM KH_STUDENT
+					WHERE MAJOR = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, inputDept);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				int stdNo = rs.getInt("학번");
+				String stdName = rs.getString("이름");
+				int stdAge = rs.getInt("나이");
+				String major = rs.getString("전공");
+				String entDate = rs.getString("입학일");
+				
+				Student std = new Student(stdNo, stdName, stdAge, major, entDate);
+				stdList.add(std);
+			}
+		} finally {
+			JDBCTemplate.close(rs);
+			JDBCTemplate.close(pstmt);
+		}
+		
+		return stdList;
 	}
 }

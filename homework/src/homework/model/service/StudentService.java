@@ -114,4 +114,13 @@ public class StudentService {
 		
 		return result;
 	}
+
+	public List<Student> searchByMajor(String inputDept) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		List<Student> stdList = dao.searchByMajor(conn, inputDept);
+		JDBCTemplate.close(conn);
+		
+		return stdList;
+	}
 }
