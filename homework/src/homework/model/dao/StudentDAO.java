@@ -142,13 +142,18 @@ public class StudentDAO {
 		
 		try {
 			String sql = """
-					UPDATE KH_STUDENT SET STD_AGE = ?
+					UPDATE KH_STUDENT SET MAJOR = ?
 					WHERE STD_NO = ?
 					""";
-		} finally {
 			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newMajor);
+			pstmt.setInt(2, selectResult);
+			result = pstmt.executeUpdate();
+		} finally {
+			JDBCTemplate.close(pstmt);
 		}
 		
-		return 0;
+		return result;
 	}
 }

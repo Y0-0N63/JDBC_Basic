@@ -74,7 +74,7 @@ public class StudentService {
 		
 		int result = dao.updateAge(conn, selectResult, newAge);
 		
-		if(result > 0) {
+		if (result > 0) {
 			JDBCTemplate.commit(conn);
 		} else {
 			JDBCTemplate.rollback(conn);
@@ -89,6 +89,13 @@ public class StudentService {
 		
 		int result = dao.updateMajor(conn, selectResult, newMajor);
 		
-		return 0;
+		if (result > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		return result;
 	}
 }

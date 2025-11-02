@@ -35,7 +35,7 @@ public class StudentView {
 				case 3:
 					updateInfo(); break;
 				case 4:
-					/* deleteStd(); */ break;
+					deleteStd(); break;
 				case 5:
 					/* searchByDept(); */ break;
 				case 0:
@@ -106,7 +106,7 @@ public class StudentView {
 		int selectResult = service.selectNo(inputNo);
 		
 		if (selectResult == 0) {
-			System.out.println("일치하는 사용자가 없습니다.");
+			System.out.println("\n일치하는 사용자가 없습니다.\n");
 			return;
 		}
 
@@ -124,8 +124,8 @@ public class StudentView {
 			case 1 : updateName(selectResult); break;
 			case 2 : updateAge(selectResult); break;
 			case 3 : updateMajor(selectResult); break;
-			case 0 : System.out.println("수정을 종료합니다."); break;
-			default : System.out.println("메뉴에 있는 번호만 입력해주세요.");
+			case 0 : System.out.println("\n수정을 종료합니다.\n"); break;
+			default : System.out.println("\n메뉴에 있는 번호만 입력해주세요.\n");
 			}
 		} while(inputNum != 0);
 
@@ -139,9 +139,9 @@ public class StudentView {
 		
 		int result = service.updateName(selectResult, newName);
 		if (result > 0) {
-			System.out.println("학생 이름을 수정했습니다.");
+			System.out.println("\n학생 이름을 수정했습니다.\n");
 		} else {
-			System.out.println("학생 이름 수정에 실패했습니다.");
+			System.out.println("\n학생 이름 수정에 실패했습니다.\n");
 		}
 	}
 	
@@ -154,9 +154,9 @@ public class StudentView {
 		
 		int result = service.updateAge(selectResult, newAge);
 		if (result > 0) {
-			System.out.println("학생 나이를 수정했습니다.");
+			System.out.println("\n학생 나이를 수정했습니다.\n");
 		} else {
-			System.out.println("학생 나이 수정에 실패했습니다.");
+			System.out.println("\n학생 나이 수정에 실패했습니다.\n");
 		}
 	}
 
@@ -165,6 +165,16 @@ public class StudentView {
 		
 		System.out.print("수정할 전공 : ");
 		String newMajor = sc.nextLine();
+		
 		int result = service.updateMajor(selectResult, newMajor);
+		if (result > 0) {
+			System.out.println("\n학생 전공을 수정했습니다.\n");
+		} else {
+			System.out.println("\n학생 전공 수정에 실패했습니다.\n");
+		}
+	}
+	
+	private void deleteStd() throws Exception {
+		
 	}
 }
