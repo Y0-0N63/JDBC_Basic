@@ -1,5 +1,7 @@
 package homework.view;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import homework.model.dto.Student;
@@ -29,9 +31,9 @@ public class StudentView {
 					insertStd();
 					break;
 				case 2:
-					/* searchAll(); */ break;
+					searchAll(); break;
 				case 3:
-					/* updateInfo(); */ break;
+					updateInfo(); break;
 				case 4:
 					/* deleteStd(); */ break;
 				case 5:
@@ -71,9 +73,98 @@ public class StudentView {
 
 		// 반환된 결과에 따라 출력할 내용 선택
 		if(result > 0) {
-			System.out.println("\n" + inputName + "학생이 추가되었습니다.\n");
+			System.out.println("\n" + inputName + "학생이 추가됐습니다.\n");
 		} else {
-			System.out.println("\n학생 추가에 실패하였습니다.\n");
+			System.out.println("\n학생 추가에 실패했습니다.\n");
 		}
+	}
+	
+	public void searchAll() throws Exception {
+		System.out.println("\n===전체 학생 조회===\n");
+		List<Student> stdList = new ArrayList<>(); 
+		
+		// 서비스 호출(SELECT) > 결과 반환 받기(stdList)
+		stdList = service.selectAll();
+		
+		if(stdList.isEmpty()) {
+			System.out.println("등록된 학생이 없습니다.");
+			return;
+		}
+		
+		for(Student std : stdList) {
+			System.out.println(std);
+		}
+	}
+	
+	public void updateInfo() throws Exception {
+		System.out.println("\n===학생 정보 수정===\n");
+		
+		System.out.print("수정할 학생 번호 입력 : ");
+		int inputNo = sc.nextInt();
+		sc.nextLine();
+		
+		int selectResult = service.selectNo(inputNo);
+		
+		if (selectResult == 0) {
+			System.out.println("일치하는 사용자가 없습니다.");
+			return;
+		}
+
+		int inputNum = 0;
+		do {
+			System.out.println("3-1. 학생 이름 수정");
+			System.out.println("3-2. 학생 나이 수정");
+			System.out.println("3-3. 학생 전공 수정");
+			System.out.println("3-0. 수정 종료");
+			System.out.print("입력 : ");
+			inputNum = sc.nextInt();
+			sc.nextLine();
+			
+			switch(inputNum) {
+			case 1 : updateName(selectResult); break;
+			case 2 : updateAge(selectResult); break;
+			case 3 : updateMajor(selectResult); break;
+			case 0 : System.out.println("수정을 종료합니다."); break;
+			default : System.out.println("메뉴에 있는 번호만 입력해주세요.");
+			}
+		} while(inputNum != 0);
+
+	}
+
+	private void updateName(int selectResult) throws Exception {
+		System.out.println("\n=== 3-1. 학생 이름 수정 ===\n");
+		
+		System.out.print("수정할 이름 : ");
+		String newName = sc.nextLine();
+		
+		int result = service.updateName(selectResult, newName);
+		if (result > 0) {
+			System.out.println("학생 이름을 수정했습니다.");
+		} else {
+			System.out.println("학생 이름 수정에 실패했습니다.");
+		}
+	}
+	
+	private void updateAge(int selectResult) throws Exception {
+		System.out.println("\n=== 3-2. 학생 나이 수정 ===\n");
+		
+		System.out.print("수정할 나이 : ");
+		int newAge = sc.nextInt();
+		sc.nextLine();
+		
+		int result = service.updateAge(selectResult, newAge);
+		if (result > 0) {
+			System.out.println("학생 나이를 수정했습니다.");
+		} else {
+			System.out.println("학생 나이 수정에 실패했습니다.");
+		}
+	}
+
+	private void updateMajor(int selectResult) throws Exception {
+		System.out.println("\n=== 3-3. 학생 전공 수정 ===\n");
+		
+		System.out.print("수정할 전공 : ");
+		String newMajor = sc.nextLine();
+		int result = service.updateMajor(selectResult, newMajor);
 	}
 }

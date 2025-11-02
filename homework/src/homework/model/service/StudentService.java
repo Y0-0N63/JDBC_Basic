@@ -1,6 +1,7 @@
 package homework.model.service;
 
 import java.sql.Connection;
+import java.util.List;
 
 import homework.common.JDBCTemplate;
 import homework.model.dao.StudentDAO;
@@ -9,14 +10,6 @@ import homework.model.dto.Student;
 public class StudentService {
 	private StudentDAO dao = new StudentDAO();
 
-	/**
-	 * 학생 등록 서비스
-	 * @param inputName
-	 * @param inputAge
-	 * @param inputDept
-	 * @return
-	 * @throws Exception 
-	 */
 	public int insertStd(Student student) throws Exception {
 		// 1. JDBCTemplate의 getConnection() 사용하여 커넥션 생성 > DAO에게 전달
 		Connection conn = JDBCTemplate.getConnection();
@@ -40,4 +33,62 @@ public class StudentService {
 		return result;
 	}
 
+	public List<Student> selectAll() throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		// DAO 호출(SELECT) > 결과(stdList) 반환받기
+		List<Student> stdList = dao.selectAll(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return stdList;
+	}
+
+
+	public int selectNo(int inputNo) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int userNo = dao.selectNo(conn, inputNo);
+		JDBCTemplate.close(conn);
+		
+		return userNo;
+	}
+
+	public int updateName(int selectResult, String newName) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = dao.updateName(conn, selectResult, newName);
+		
+		if(result > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		return result;
+	}
+
+	public int updateAge(int selectResult, int newAge) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = dao.updateAge(conn, selectResult, newAge);
+		
+		if(result > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		return result;
+	}
+
+	public int updateMajor(int selectResult, String newMajor) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = dao.updateMajor(conn, selectResult, newMajor);
+		
+		return 0;
+	}
 }
