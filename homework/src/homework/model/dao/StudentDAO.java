@@ -156,4 +156,23 @@ public class StudentDAO {
 		
 		return result;
 	}
+
+	public int deleteStd(Connection conn, int inputNo) throws Exception {
+		int result = 0;
+		
+		try {
+			String sql = """
+					DELETE FROM KH_STUDENT
+					WHERE STD_NO = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, inputNo);
+			result = pstmt.executeUpdate();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+		
+		return result;
+	}
 }

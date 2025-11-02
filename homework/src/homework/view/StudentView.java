@@ -106,7 +106,7 @@ public class StudentView {
 		int selectResult = service.selectNo(inputNo);
 		
 		if (selectResult == 0) {
-			System.out.println("\n일치하는 사용자가 없습니다.\n");
+			System.out.println("\n일치하는 학생 번호가 없습니다.\n");
 			return;
 		}
 
@@ -175,6 +175,16 @@ public class StudentView {
 	}
 	
 	private void deleteStd() throws Exception {
+		System.out.println("\n=== 4. 학생 삭제 ===\n");
 		
+		System.out.print("삭제할 학생의 학번 : ");
+		int inputNo = sc.nextInt();
+		
+		int result = service.deleteStd(inputNo);
+		if (result > 0) {
+			System.out.println("\n학생 삭제에 성공했습니다.\n");
+		} else {
+			System.out.println("\n학생 삭제에 실패했습니다.\n");
+		}
 	}
 }

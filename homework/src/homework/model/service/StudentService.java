@@ -98,4 +98,20 @@ public class StudentService {
 		JDBCTemplate.close(conn);
 		return result;
 	}
+
+	public int deleteStd(int inputNo) throws Exception {
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = dao.deleteStd(conn, inputNo);
+		
+		if (result > 0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
 }
